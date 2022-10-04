@@ -3,13 +3,11 @@ import java.util.Stack;
 public class Calculator{
 
     private final InterfaceStringIterator iterator;
-    private final InterfaceOperationsPriorities priorities;
     private final Stack<Double> numbers;
     private final Stack<String> operators;
 
-    public Calculator(InterfaceStringIterator iterator, InterfaceOperationsPriorities priorities) {
+    public Calculator(InterfaceStringIterator iterator) {
         this.iterator = iterator;
-        this.priorities = priorities;
         numbers = new Stack<>();
         operators = new Stack<>();
     }
@@ -28,13 +26,25 @@ public class Calculator{
                         calculate();
                     }
                     operators.pop();
+                    if (operators.peek().equals("-")){
+                        double negativeNumber = numbers.pop();
+                        negativeNumber *= -1;
+                        numbers.push(negativeNumber);
+                        if (numbers.size() > 1){
+                            operators.pop();
+                            operators.push("+");
+                            calculate();
+                        } else {
+                            operators.pop();
+                        }
+                    }
                 } else {
                     if (operators.empty()) {
                         operators.push(element);
                     } else {
-                        int priority = priorities.getPriority(element);
+                        int priority = getPriority(element);
                         while (!operators.empty() && !operators.peek().equals("(") && !operators.peek().equals(")") &&
-                                priority <= priorities.getPriority(operators.peek())) {
+                                priority <= getPriority(operators.peek())) {
                             calculate();
                         }
                         operators.push(element);
@@ -47,6 +57,7 @@ public class Calculator{
         }
         return numbers.pop();
     }
+
     private void calculate() {
         String operator = operators.pop();
         Double n2 = numbers.pop();
@@ -68,6 +79,15 @@ public class Calculator{
                 break;
         }
         numbers.push(result);
+    }
+
+    private int getPriority(String operator){
+        switch (operator){
+            case "*":
+            case "/":
+                return 2;
+        }
+        return 1;
     }
 
 }

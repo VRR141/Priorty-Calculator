@@ -1,28 +1,53 @@
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class CalculatorTest {
 
     private Calculator sut;
 
     @Test
-    public void getResultTest(){
+    public void getResultTestFirst(){
         double expected = 10;
 
         String input = "25/(15-2.5)*5";
-        List<String> operators = Arrays.asList("+", "-", "*", "/");
         InterfaceStringIterator stringIterator = new StringIterator(input);
-        InterfaceOperationsPriorities operationsPriorities = new OperationsPriorities();
-        for (String op: operators){
-            operationsPriorities.addOperator(op);
-        }
 
-        sut = new Calculator(stringIterator, operationsPriorities);
+        sut = new Calculator(stringIterator);
         double actual = sut.getResult();
 
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    public void getResultTestSecond() {
+        double expected = -9;
+
+        String input = "-(4+5)";
+        InterfaceStringIterator stringIterator = new StringIterator(input);
+
+        sut = new Calculator(stringIterator);
+        double actual = sut.getResult();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getResultTestThird() {
+        double expected = 30.5;
+
+        String input = "-(4+5)-(-4.5-7*5)";
+        InterfaceStringIterator stringIterator = new StringIterator(input);
+
+        sut = new Calculator(stringIterator);
+        double actual = sut.getResult();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @AfterEach
+    public void end(){
+        sut = null;
+    }
+
 }
